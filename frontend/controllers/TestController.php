@@ -5,16 +5,39 @@ namespace frontend\controllers;
 use Yii;
 use yii\web\Controller;
 use frontend\models\Test;
+use frontend\models\example\ExampleValidation;
 
-/**
- * 
- */
 class TestController extends Controller
 {
 	
-	public function actionIndex()
+    public function actionValidation()
+    {
+        $model = new ExampleValidation();
+
+        $formData = Yii::$app->request->post();
+        
+        if (Yii::$app->request->isPost) {
+            
+            $model->attributes = $formData;         
+                                                
+            if ($model->validate()) {
+                echo '<pre>';
+                print_r($model->attributes);
+                echo '<pre>';die;
+                
+                Yii::$app->session->setFlash('success', 'Data validated!');
+            }
+        }
+        
+        return $this->render('validation', [
+            'model' => $model,
+        ]);
+    }
+    
+    public function actionIndex()
 	{
-		$max = Yii::$app->params['maxNewsInList'];
+
+                $max = Yii::$app->params['maxNewsInList'];
                 
                 $list = Test::getNewsList($max);
 
